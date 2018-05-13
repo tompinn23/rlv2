@@ -10,14 +10,22 @@ int main(int argc, char** argv)
     // Printing text
     terminal_print(1, 1, "Hello, world!");
     terminal_refresh();
-    // Wait until user close the window
 	FILE* fp = fopen("room.txt", "r");
-	if (!fp)
+	if (fp == NULL)
 	{
-		printf("Failed to open file!\n");
+		fprintf(stderr, "Failed to open file");
+		exit(-1);
 	}
-	parse_room(fp);
-	printf("Hello\n");
+	rl_room* rm = parse_room(fp);
+	for (int i = 0; i < rm->cols; i++)
+	{
+		for (int j = 0; j < rm->rows; j++)
+		{
+			terminal_put(i, j, get_room_tile(rm, i, j));
+		}
+	}
+    // Wait until user close the window
+	terminal_refresh();
     while (terminal_read() != TK_CLOSE);
   
     terminal_close();

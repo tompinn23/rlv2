@@ -1,6 +1,6 @@
 
 
-add_executable(rl main.c parser.c)
+add_executable(rl main.c parser.c generate.c)
 target_link_libraries(rl bearlib)
 
 get_target_property(LIB_LOCATION bearlib IMPORTED_LOCATION)
