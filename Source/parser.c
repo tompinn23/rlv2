@@ -44,14 +44,12 @@ char* parse_layout(FILE* fp, int rows, int cols)
 {
 	char* map = calloc((rows * cols), sizeof(char));
 	char* line = malloc(sizeof(char) * cols + 1);
-	read_line(fp, line, cols + 1);
+
 	for (int y = 0; y < rows; y++)
 	{
-		for (int x = 0; x < cols; x++)
-		{
-			map[(x * cols) + y] = line[x];
-		}
 		read_line(fp, line, cols + 1);
+		for (int x = 0; x < cols; x++)
+			map[(x * cols) + y] = line[x];
 	}
 	fseek(fp, -strlen(line), SEEK_CUR);
 	map[rows * cols] = '\0';
@@ -96,7 +94,33 @@ rl_room* parse_room(FILE* fp)
 	return alloc_room(name, cols, rows, map);
 }
 
-rl_room ** parse_rooms(FILE * fp)
+room_list* parse_rooms(FILE * fp)
 {
-	return NULL;
+	int length = 0;
+	int max = 20;
+	room_list* list = malloc(sizeof(room_list));
+	rl_room** rooms = malloc(max * sizeof(rl_room*));
+	if (rooms == NULL)
+	{
+		return NULL;
+	}
+	while (!feof(fp))
+	{
+		rl_room* room = parse_room(fp);
+		if (length == max)
+		{
+			max += 10;
+			rl_room** tmp = realloc(rooms, max);
+			if (tmp == NULL)
+			{
+				free(rooms);
+				return NULL;
+			}
+		}
+		rooms[length] = room;
+		length++;
+	}
+	list->roomNum = length;
+	list->rooms = rooms;
+	return list;
 }

@@ -16,15 +16,28 @@ int main(int argc, char** argv)
 		fprintf(stderr, "Failed to open file");
 		exit(-1);
 	}
-	rl_room* rm = parse_room(fp);
-	for (int i = 0; i < rm->cols; i++)
+	room_list* rooms = parse_rooms(fp);
+	rl_room* rm = rooms->rooms[0];
+	for (int i = 0; i < rm->width; i++)
 	{
-		for (int j = 0; j < rm->rows; j++)
+		for (int j = 0; j < rm->height; j++)
 		{
 			terminal_put(i, j, get_room_tile(rm, i, j));
 		}
 	}
     // Wait until user close the window
+	terminal_refresh();
+	terminal_read();
+	terminal_clear();
+	rm = rooms->rooms[1];
+	for (int j = 0; j < rm->height; j++)
+	{
+		for (int i = 0; i < rm->width; i++)
+		{
+			terminal_put(i, j, get_room_tile(rm, i, j));
+			terminal_refresh();
+		}
+	}
 	terminal_refresh();
     while (terminal_read() != TK_CLOSE);
   
