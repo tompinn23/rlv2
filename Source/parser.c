@@ -4,6 +4,20 @@
 #include <string.h>
 #include <stdlib.h>
 
+static char* last_name = "";
+static char* file_name = "";
+static int line = 0;
+
+int get_file_location()
+{
+	return line;
+}
+
+char* get_filename()
+{
+	return file_name;
+}
+
 int read_line(FILE* fp, char* buf, int max)
 {
 	int length = 0;
@@ -52,7 +66,6 @@ char* parse_layout(FILE* fp, int rows, int cols)
 			map[(x * cols) + y] = line[x];
 	}
 	fseek(fp, -strlen(line), SEEK_CUR);
-	map[rows * cols] = '\0';
 	free(line);
 	return map;
 }
@@ -61,17 +74,21 @@ char* parse_layout(FILE* fp, int rows, int cols)
 
 rl_room* parse_room(FILE* fp)
 {
-	char* name;
-	int rows;
-	int cols;
-	char* map;
-	int res;
+	char* name = NULL;
+	int rows = 0;
+	int cols = 0;
+	char* map = NULL;
+	int res = 0;
 	char* line = malloc(sizeof(char) * 50);
 	res = read_line(fp, line, 50);
 	while (res == 1)
 	{
 		if (strstr(line, "name:") == line)
+		{
 			name = strdup(line + 5);
+			if (name == "")
+				log_print("%s", "Name cannot be empty.")
+		}
 		else if (strstr(line, "rows:") == line)
 		{
 			rows = parse_string(line + 5);
@@ -94,15 +111,17 @@ rl_room* parse_room(FILE* fp)
 	return alloc_room(name, cols, rows, map);
 }
 
-room_list* parse_rooms(FILE * fp)
+int parse_rooms(FILE * fp, char* filename, room_list** list, map_room_t map)
 {
+	file_name = filename;
 	int length = 0;
 	int max = 20;
-	room_list* list = malloc(sizeof(room_list));
+	*list = malloc(sizeof(room_list));
+	room_list* ptr = *list;
 	rl_room** rooms = malloc(max * sizeof(rl_room*));
 	if (rooms == NULL)
 	{
-		return NULL;
+		return 0;
 	}
 	while (!feof(fp))
 	{
@@ -114,13 +133,14 @@ room_list* parse_rooms(FILE * fp)
 			if (tmp == NULL)
 			{
 				free(rooms);
-				return NULL;
+				return 0;
 			}
 		}
+		map_set(&map, room->name, room);
 		rooms[length] = room;
 		length++;
 	}
-	list->roomNum = length;
-	list->rooms = rooms;
-	return list;
+	ptr->roomNum = length;
+	ptr->rooms = rooms;
+	return 1;
 }

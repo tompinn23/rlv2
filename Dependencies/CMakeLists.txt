@@ -22,3 +22,7 @@ message(FATAL_ERROR "Unsupported Platform")
 endif()
 
 target_include_directories(bearlib INTERFACE "${CMAKE_SOURCE_DIR}/Dependencies/include")
+
+add_library(hashMap STATIC map/map.c)
+
+target_include_directories(hashMap PUBLIC "${CMAKE_SOURCE_DIR}/Dependencies/include")

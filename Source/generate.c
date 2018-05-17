@@ -1,9 +1,27 @@
 #include "generate.h"
+
 #include "stdlib.h"
+#include "stdio.h"
 
 rl_room* alloc_room(char* name, int cols, int rows, char* map)
 {
 	rl_room* ptr = malloc(sizeof(rl_room));
+	if (ptr == NULL)
+	{
+		fprintf(stderr, "Failed to allocate Room!");
+		return NULL;
+	}
+	if (name == "" || name == NULL)
+	{
+		fprintf(stderr, "Name Cannot be null!");
+		return NULL;
+	}
+	if (cols == 0)
+	{
+		fprintf(stderr, "Columns cannot be 0!");
+		return NULL;
+	}
+	
 	ptr->name = name;
 	ptr->height = rows;
 	ptr->width = cols;
