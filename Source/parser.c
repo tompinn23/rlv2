@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-static char* last_name = "";
-static char* file_name = "";
+static char* last_name = NULL;
+static char* file_name = NULL;
 static int line = 0;
 
 int get_file_location()
@@ -20,6 +20,11 @@ char* get_filename()
 
 int read_line(FILE* fp, char* buf, int max)
 {
+	if (last_name != file_name)
+	{
+		last_name = file_name;
+		line = 0;
+	}
 	int length = 0;
 	int ch = fgetc(fp);
 	while ((ch != EOF) && (ch != '\n'))
@@ -38,7 +43,7 @@ int read_line(FILE* fp, char* buf, int max)
 	{
 		return 0;
 	}
-
+	line++;
 	return 1;
 }
 
@@ -87,7 +92,7 @@ rl_room* parse_room(FILE* fp)
 		{
 			name = strdup(line + 5);
 			if (name == "")
-				log_print("%s", "Name cannot be empty.")
+				log_print("%s", "Name cannot be empty.");
 		}
 		else if (strstr(line, "rows:") == line)
 		{
@@ -142,5 +147,12 @@ int parse_rooms(FILE * fp, char* filename, room_list** list, map_room_t map)
 	}
 	ptr->roomNum = length;
 	ptr->rooms = rooms;
+	file_name = "";
 	return 1;
+}
+
+
+int initialise_data()
+{
+
 }
