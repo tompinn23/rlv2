@@ -1,2 +1,4 @@
 .vs
 [Bb]uild
+Documentation/*
+!/Documentation/README.md
