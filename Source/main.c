@@ -27,11 +27,15 @@ int main(int argc, char** argv)
 {
 	init_logging("rl.log");
 	log_print("Hallo there!");
-	terminal_open();
+
+	char* buf = NULL;
+	slurp("room.txt", &buf);
+
+	//terminal_open();
   
     // Printing text
-    terminal_print(1, 1, "Hello, world!");
-    terminal_refresh();
+    //terminal_print(1, 1, "Hello, world!");
+    //terminal_refresh();
 	FILE* fp = fopen("room.txt", "r");
 	if (fp == NULL)
 	{
@@ -44,8 +48,8 @@ int main(int argc, char** argv)
 	parse_rooms(fp, "room.txt", &rooms, &table);
 	rl_room** rm = map_get(&table, "Room Uno");
 	printf("%s\n", (*rm)->name);
-	terminal_refresh();
-    while (terminal_read() != TK_CLOSE);
-  
-    terminal_close();
+	//terminal_refresh();
+    //while (terminal_read() != TK_CLOSE);
+	while (1);
+    //terminal_close();
 }

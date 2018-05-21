@@ -20,12 +20,10 @@ along with this program.If not, see <https://www.gnu.org/licenses/>.
 #include "errno.h"
 #include <string.h>
 #include <stdlib.h>
-
 #include "logging.h"
 
 static char* file_name = NULL;
 static int line = 0;
-
 
 int get_file_location()
 {
@@ -35,6 +33,34 @@ int get_file_location()
 char* get_filename()
 {
 	return file_name;
+}
+/*
+ You have to free the buffer as it is malloc in this function.
+ It is up to the caller to free the buffer.
+*/
+size_t slurp(char* filename, char** buf)
+{
+	char* buffer = NULL;
+	FILE* fp = fopen(filename, "rb");
+	if (!fp)
+	{
+		log_print("Failed to open file: %s", filename);
+		return 0;
+	}
+	fseek(fp, 0L, SEEK_END);
+	size_t length = ftell(fp);
+	fseek(fp, 0L, SEEK_SET);
+	buffer = malloc(length + 1);
+	if (!buffer)
+	{
+		log_print("Failed to allocate memory to read file: %s", filename);
+		return 0;
+	}
+	fread(buffer, sizeof(char), length, fp);
+	buffer[length] = '\0';
+	printf("%s", buffer);
+	*buf = buffer;
+	return length;
 }
 
 void reset_file()
@@ -149,7 +175,7 @@ int parse_rooms(FILE * fp, char* filename, room_list** list, map_room_t map)
 		reset_file();
 		return -1;
 	}
-	while (!feof(fp))
+	do
 	{
 		rl_room* room = parse_room(fp);
 		if (length == max)
@@ -163,10 +189,12 @@ int parse_rooms(FILE * fp, char* filename, room_list** list, map_room_t map)
 				return -1;
 			}
 		}
+		if (room == NULL)
+			continue;
 		map_set(&map, room->name, room);
 		rooms[length] = room;
 		length++;
-	}
+	} while (!feof(fp));
 	ptr->roomNum = length;
 	ptr->rooms = rooms;
 	reset_file();
