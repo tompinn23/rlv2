@@ -19,30 +19,14 @@
 #include "generate.h"
 #include "stdlib.h"
 #include "stdio.h"
+#include "u-mem.h"
 
-static room_list* _rooms;
 
 static map_room_t _room_map;
 
-rl_room** get_rooms(int* max)
-{
-	max = _rooms->roomNum;
-	return _rooms->rooms;
-}
-
-map_room_t get_room_map()
-{
-	return _room_map;
-}
-
 rl_room* alloc_room(char* name, int cols, int rows, char* map)
 {
-	rl_room* ptr = malloc(sizeof(rl_room));
-	if (ptr == NULL)
-	{
-		log_print("Failed to allocate room");
-		return NULL;
-	}
+	rl_room* ptr = mem_alloc(sizeof(rl_room));
 	if (name == "" || name == NULL)
 	{
 		fprintf(stderr, "Name Cannot be null!");
@@ -63,19 +47,11 @@ rl_room* alloc_room(char* name, int cols, int rows, char* map)
 
 void free_room(rl_room* room)
 {
-	free(room->name);
-	free(room->map);
-	free(room);
+	mem_free(room->name);
+	mem_free(room->map);
+	mem_free(room);
 }
 
-void free_rooms_list(room_list* rooms)
-{
-	for (int i = 0; i < rooms->roomNum; i++)
-	{
-		free_room(rooms->rooms[i]);
-	}
-	free(rooms);
-}
 
 char get_room_tile(rl_room * room, int x, int y)
 {

@@ -15,13 +15,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.If not, see <https://www.gnu.org/licenses/>.
 */
-#include "logging.h"
+#include "u-logging.h"
 
 #include "time.h"
 #include "string.h"
 #include "stdlib.h"
 #include "errno.h"
-#include "parser.h"
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -47,8 +46,8 @@ void log_print(const char* format, ...)
 		fprintf(stderr, "Call 'init_logging()' first.");
 		return;
 	}
-	char* file = get_filename();
-	int line = get_file_location();
+	char* file = "<NULL>";
+	int line = 0;
 	time_t t = time(NULL);
 	struct tm* timeinfo;
 	timeinfo = localtime(&t);
@@ -63,7 +62,7 @@ void log_print(const char* format, ...)
 	else
 	{
 		buf = calloc((strlen(time_str) + strlen(format) + strlen(file) + 26), sizeof(char));
-		snprintf(buf, (strlen(time_str) + strlen(format) + strlen(file) + 26), "%s: %s at %s:%d", time_str, format, file, line);
+		snprintf(buf, (strlen(time_str) + strlen(format) + strlen(file) + 26), "%s: %s at %s:%d\n", time_str, format, file, line);
 	}
 	va_list args;
 	va_start(args, format);

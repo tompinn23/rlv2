@@ -1,0 +1,45 @@
+<rooms>
+	<!-- Room 1 -->
+	<room>
+		<name>Room 1</name>
+		<width>6</width>
+		<height>6</height>
+		<plan>
+			<l>######</l>
+			<l>#....#</l>
+			<l>#....=</l>
+			<l>#....#</l>
+			<l>#....#</l>
+			<l>######</l>
+		</plan>
+	</room>
+	<!-- Room 2 -->
+	<room>
+		<name>Room 2</name>
+		<width>7</width>
+		<height>6</height>
+		<plan>
+			<l>#######</l>
+			<l>#..O..#</l>
+			<l>#----.#</l>
+			<l>#.....=</l>
+			<l>#.....#</l>
+			<l>#######</l>
+		</plan>
+	</room>
+	<!-- Room 3 -->
+	<room>
+		<name>Super Shop</name>
+		<width>7</width>
+		<height>7</height>
+		<plan>
+			<l>#######</l>
+			<l>#..O..#</l>
+			<l>#----.#</l>
+			<l>#.....=</l>
+			<l>#.....#</l>
+			<l>#.-.-.#</l>
+			<l>#######</l>
+		</plan>
+	</room>
+</rooms>

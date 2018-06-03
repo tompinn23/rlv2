@@ -1,5 +1,5 @@
-add_executable(rl main.c parser.c generate.c logging.c)
-target_link_libraries(rl bearlib hashMap)
+add_executable(rl main.c u-logging.c u-file.c u-mem.c u-util.c)
+target_link_libraries(rl bearlib hashMap jsmn)
 
 get_target_property(LIB_LOCATION bearlib IMPORTED_LOCATION)
 

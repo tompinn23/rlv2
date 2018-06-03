@@ -22,76 +22,6 @@ along with this program.If not, see <https://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include "logging.h"
 
-static char* file_name = NULL;
-static int line = 0;
-
-int get_file_location()
-{
-	return line;
-}
-
-char* get_filename()
-{
-	return file_name;
-}
-/*
- You have to free the buffer as it is malloc in this function.
- It is up to the caller to free the buffer.
-*/
-size_t slurp(char* filename, char** buf)
-{
-	char* buffer = NULL;
-	FILE* fp = fopen(filename, "rb");
-	if (!fp)
-	{
-		log_print("Failed to open file: %s", filename);
-		return 0;
-	}
-	fseek(fp, 0L, SEEK_END);
-	size_t length = ftell(fp);
-	fseek(fp, 0L, SEEK_SET);
-	buffer = malloc(length + 1);
-	if (!buffer)
-	{
-		log_print("Failed to allocate memory to read file: %s", filename);
-		return 0;
-	}
-	fread(buffer, sizeof(char), length, fp);
-	buffer[length] = '\0';
-	printf("%s", buffer);
-	*buf = buffer;
-	return length;
-}
-
-void reset_file()
-{
-	file_name = NULL;
-	line = 0;
-}
-
-int read_line(FILE* fp, char* buf, int max)
-{
-	int length = 0;
-	int ch = fgetc(fp);
-	while ((ch != EOF) && (ch != '\n'))
-	{
-		if (length == max)
-		{
-			max += 20;
-			buf = realloc(buf, max);
-		}
-		buf[length] = ch;
-		length++;
-		ch = fgetc(fp);
-	}
-	buf[length] = '\0';
-	if (ch == EOF && buf[0] == '\0')
-	{
-		return 0;
-	}
-	line++;
-	return 1;
-}
 
 long int parse_string(char* str)
 {
@@ -138,7 +68,7 @@ rl_room* parse_room(FILE* fp)
 		{
 			name = strdup(line + 5);
 			if (name == "")
-				log_print("%s", "Name cannot be empty.");
+				log_print("Name cannot be empty.");
 		}
 		else if (strstr(line, "rows:") == line)
 		{
@@ -162,41 +92,7 @@ rl_room* parse_room(FILE* fp)
 	return alloc_room(name, cols, rows, map);
 }
 
-int parse_rooms(FILE * fp, char* filename, room_list** list, map_room_t map)
+map_room_t parse_rooms(rl_file* file)
 {
-	file_name = filename;
-	int length = 0;
-	int max = 20;
-	*list = malloc(sizeof(room_list));
-	room_list* ptr = *list;
-	rl_room** rooms = malloc(max * sizeof(rl_room*));
-	if (rooms == NULL)
-	{
-		reset_file();
-		return -1;
-	}
-	do
-	{
-		rl_room* room = parse_room(fp);
-		if (length == max)
-		{
-			max += 10;
-			rl_room** tmp = realloc(rooms, max);
-			if (tmp == NULL)
-			{
-				free(rooms);
-				reset_file();
-				return -1;
-			}
-		}
-		if (room == NULL)
-			continue;
-		map_set(&map, room->name, room);
-		rooms[length] = room;
-		length++;
-	} while (!feof(fp));
-	ptr->roomNum = length;
-	ptr->rooms = rooms;
-	reset_file();
-	return 0;
+
 }

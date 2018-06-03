@@ -1,25 +1,37 @@
 #pragma once
 
-#include "stdbool.h"
+#include "generic.h"
+#include <stdio.h>
 
 typedef enum file_mode {
-	FILE_TREAD = 0,
-	FILE_TRWITE = 1,
-	FILE_TAPPEND = 2,
-	FILE_TRW = 3,
-
-	FILE_BREAD = 4,
-	FILE_BWRITE = 5,
-	FILE_BAPPEND = 6,
-	FILE_BRW = 7,
+	FILE_READ = 0,
+	FILE_WRITE = 1,
+	FILE_APPEND = 2,
+	FILE_RW = 3,
 
 	FILE_MMAP = 8
 } file_mode;
 
+typedef enum file_type {
+	TEXT_FILE = 0,
+	BINARY_FILE = 1
+} file_type;
+
 //TODO: Error handling enum. 
 
-typedef rl_file rl_file;
+typedef struct rl_file rl_file;
 
-rl_file* file_open(const char* filename, file_mode mode);
+rl_file* file_open(char* filename, file_mode mode, file_type type);
+void file_close(rl_file* file);
 
+FILE* get_file_pointer(rl_file* file);
+
+/* File IO */
+
+int file_getc(rl_file* file);
+size_t file_slurp(rl_file* file, char** buf);
+
+/* Line IO */
+
+bool file_readline(rl_file* file, char** buf);
 

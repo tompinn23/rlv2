@@ -21,8 +21,19 @@ else()
 message(FATAL_ERROR "Unsupported Platform")
 endif()
 
-target_include_directories(bearlib INTERFACE "${CMAKE_SOURCE_DIR}/Dependencies/include")
+set(DEP_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/Dependencies/include")
 
-add_library(hashMap STATIC map/map.c)
+target_include_directories(bearlib INTERFACE ${DEP_INCLUDE_DIR})
 
-target_include_directories(hashMap PUBLIC "${CMAKE_SOURCE_DIR}/Dependencies/include")
+add_library(hashMap STATIC map.c)
+target_include_directories(hashMap PUBLIC ${DEP_INCLUDE_DIR})
+
+add_library(xml STATIC xml.c)
+target_include_directories(xml PUBLIC ${DEP_INCLUDE_DIR})
+target_include_directories(xml PRIVATE "${CMAKE_SOURCE_DIR}/Source")
+
+add_library(re STATIC re.c)
+target_include_directories(re PUBLIC ${DEP_INCLUDE_DIR})
+
+add_library(jsmn STATIC jsmn.c)
+target_include_directories(jsmn PUBLIC ${DEP_INCLUDE_DIR})
